@@ -8,6 +8,7 @@ void block_xor(unsigned char *a, unsigned char *b, unsigned char *out) {
 	int i;
 	for (i = 0; i < BLOCK_SIZE; i++)
 		out[i] = a[i] ^ b[i];
+
 }
 
 int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_string &output) {
@@ -25,23 +26,22 @@ int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_stri
 
 	/* Compute the number of bytes needed to pad to block size */
 	pN = 0;
+
 	if (N % BLOCK_SIZE)
 		pN = BLOCK_SIZE - N % BLOCK_SIZE;
 
 	/* Compute the number of blocks for the message */
 	num_blocks = (N + pN) / BLOCK_SIZE;
 
-	if (DEBUG) {
-		cout << "num blocks = " << num_blocks << endl;
-		cout << "pN = " << pN << endl;
-	}
+	cerr << "N is : " << N << endl;
+	cerr << "num blocks = " << num_blocks << endl;
+	cerr << "pN = " << pN << endl;
 
 	output.resize((num_blocks + 2) * BLOCK_SIZE);
 	memcpy(cipher, IV, BLOCK_SIZE);
 
 	/* Do the CBC on each block, xor the result of the prev. in with the plaintext*/
 	for (i = 0; i < num_blocks; i++) {
-
 		if ( (i * BLOCK_SIZE + BLOCK_SIZE) > N) {
 			if (DEBUG) {
 				cout << "creating a pad, copying " <<
@@ -57,7 +57,7 @@ int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_stri
 		u_string block_s(block);
 		block_s.resize(BLOCK_SIZE);
 
-		ret = encode(key, block_s);
+		ret = encode(key, block);
 		memcpy(cipher, ret.c_str(), BLOCK_SIZE);
 		memcpy(&(output[i*BLOCK_SIZE]), cipher, BLOCK_SIZE);
 	}
@@ -70,10 +70,9 @@ int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_stri
 		output[(num_blocks + 1) * BLOCK_SIZE + i] = IV[i];
 	}
 
+//	cout << "pN = " << pN << endl;
 	fwrite(output.c_str(), 1, (num_blocks + 2) * BLOCK_SIZE, stdout);
 	free(pad);
-	//cout << "output size is: " << output.size() << endl;
-	//fwrite(output.c_str(), 1, output.size(), stdout);
 	return (num_blocks + 1) * BLOCK_SIZE;
 }
 
@@ -88,23 +87,28 @@ void cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &outpu
 	unsigned char block[BLOCK_SIZE];
 	
 	u_string ret;
-	int i;
+	int i, k, size;
+	int j;
 	pN = 0;
 
 	/* Compute the number of blocks and the number of bytes of padding */
 	num_blocks = N / BLOCK_SIZE;
-	cout << "num blocks = " << num_blocks << endl;
-	pN = text[(num_blocks - 1) *BLOCK_SIZE - 1];
-	cout << "pN = " << pN << endl;
+	pN = text[(num_blocks - 1) * BLOCK_SIZE - 1];
 
 	/* Grab the IV from the end of the input text */
 	memcpy(IV, (text + (num_blocks - 1) * BLOCK_SIZE), BLOCK_SIZE);
 	output.resize((num_blocks - 2) * BLOCK_SIZE - pN);
 
-	for (i = num_blocks - 2; i >= 0; i--) {
-		if (i == 0)
-			ptr = IV;
+	size = BLOCK_SIZE - pN;
+
+	cerr << " num_blocks = " << num_blocks << endl;
+	cerr << " pN = " << pN << endl;
+
+	for (i = num_blocks - 3, k = 0; i >= 0; i--, k++) {
+		if (i == 0) { //cout << "i is zero, using iv\n";
+			ptr = IV;}
 		else {
+			cerr << "using the block for i = " << i - 1 << endl;
 			memcpy(prev_block, (text + (i - 1) * BLOCK_SIZE), BLOCK_SIZE);
 			ptr = prev_block;
 		}
@@ -112,15 +116,27 @@ void cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &outpu
 		memcpy(block, text + i * BLOCK_SIZE, BLOCK_SIZE);
 		u_string block_s(block);
 		block_s.resize(BLOCK_SIZE);
-		ret = decode(key, block_s);
-		memcpy(cur_block, ret.c_str(), BLOCK_SIZE);
-		block_xor(ptr, cur_block, out);
-		fwrite(out, 1, BLOCK_SIZE, stdout);
-		int j;
+		cerr << "printing out the current block\n";
 
-		for (j = 0; j < BLOCK_SIZE; j++) {
-			output[i * BLOCK_SIZE + j] = out[j];
+		ret = decode(key, text + i *BLOCK_SIZE);
+		for (j = 0; j < BLOCK_SIZE; j++)
+			cur_block[j] = ret[j];
+		if (i == 0)
+			block_xor(IV, cur_block, out);
+		else 
+			block_xor(prev_block, cur_block, out);
+
+		cerr << "i = " << i << " k = " << k << " size = " << size << endl;
+		for (j = 0; j < size; j++) {
+			output[(i) * BLOCK_SIZE + j] = out[j];
+			cerr << "settig: " << (int) out[j] << endl;
 		}
+		size = BLOCK_SIZE;
+	}
+
+
+	for (i = 0; i < (num_blocks - 2) * BLOCK_SIZE - pN; i++) {
+		//cout << "i = " << i << "output[i] = " << output[i] << endl;
 	}
 
 	printf("%s\n", output.c_str());

@@ -108,9 +108,9 @@ int main(int argc, char *argv[]) {
 
 	/* Run the correct action */
 	if (action == ENCRYPTION)
-		N = encrypt(mode, key, text, text_ref.size(), output);
+		N = encrypt(mode, key, text, text_ref.size() - 1 , output);
 	else
-		decrypt(mode, key, text, text_ref.size(), output);
+		decrypt(mode, key, text, text_ref.size() + 1, output);
 
 
 	/* Have not written the file output yet, it wasn't working properly */

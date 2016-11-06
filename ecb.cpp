@@ -28,7 +28,7 @@ int main()
   return 0;
 }
 */
-extern  u_string encode(u_string key, u_string data)
+extern  u_string encode(u_string key, unsigned char *data)
 {
   EVP_CIPHER_CTX ctx;
   EVP_CIPHER_CTX_init(&ctx);
@@ -36,14 +36,14 @@ extern  u_string encode(u_string key, u_string data)
   EVP_CIPHER_CTX_set_padding(&ctx, false);
   unsigned char buffer[1024], *pointer = buffer;
   int outlen;
-  EVP_EncryptUpdate (&ctx, pointer, &outlen, data.c_str(), data.length()) or ABORT();
+  EVP_EncryptUpdate (&ctx, pointer, &outlen, data, 16) or ABORT();
   pointer += outlen;
   EVP_EncryptFinal_ex(&ctx, pointer, &outlen) or ABORT();
   pointer += outlen;
   return u_string(buffer, pointer-buffer);
 }
 
-extern u_string decode(u_string key, u_string data)
+extern u_string decode(u_string key, unsigned char *data)
 {
   EVP_CIPHER_CTX ctx;
   EVP_CIPHER_CTX_init(&ctx);
@@ -51,7 +51,7 @@ extern u_string decode(u_string key, u_string data)
   EVP_CIPHER_CTX_set_padding(&ctx, false);
   unsigned char buffer[1024], *pointer = buffer;
   int outlen;
-  EVP_DecryptUpdate (&ctx, pointer, &outlen, data.c_str(), data.length()) or ABORT();
+  EVP_DecryptUpdate (&ctx, pointer, &outlen, data, 16) or ABORT();
   pointer += outlen;
   EVP_DecryptFinal_ex(&ctx, pointer, &outlen) or ABORT();
   pointer += outlen;

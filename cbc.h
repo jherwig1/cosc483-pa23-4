@@ -1,13 +1,12 @@
 #ifndef CBC_HEADER
 #define CBC_HEADER
 
-
 #define BLOCK_SIZE 16
 #define DEBUG 0
 
 typedef std::basic_string<unsigned char> u_string;
-extern u_string encode(u_string key, u_string data);
-extern u_string decode(u_string key, u_string data);
+extern u_string encode(u_string key, unsigned char *data);
+extern u_string decode(u_string key, unsigned char *data);
 
 void block_xor(unsigned char *a, unsigned char *b, unsigned char *out);
 
