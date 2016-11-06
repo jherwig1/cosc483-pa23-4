@@ -9,6 +9,8 @@
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
 
+#include "cbc.h"
+
 typedef std::basic_string<unsigned char> u_string;
 extern u_string encode(u_string key, u_string data);
 extern u_string decode(u_string key, u_string data);
@@ -23,14 +25,12 @@ using namespace std;
 
 #define DEBUG 0
 
-extern int ctr_encrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output);
+int ctr_encrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {
+	return 1;
+}
 
-extern int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output);
 
-
-extern void ctr_decrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output);
-
-extern void cbc_decrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output);
+extern void ctr_decrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {}
 
 int encrypt(string mode, unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {
 	if (mode == CTR)
