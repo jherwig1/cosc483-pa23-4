@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Read in the keyfile and textfile */
-	fin.open(keyfile);
+	fin.open(keyfile.c_str());
 
 	if (!fin.is_open()) {
 		cerr << "Could not open " << keyfile << " for reading\n";
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 	keyf << fin.rdbuf();
 	fin.close();
 
-	fin.open(textfile);
+	fin.open(textfile.c_str());
 	if (!fin.is_open()) {
 		cerr << "Could not open " << textfile << " for reading\n";
 		exit(1);
