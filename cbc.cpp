@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstdlib>
+#include <string.h>
 #include <openssl/rand.h>
 #include "cbc.h"
 
