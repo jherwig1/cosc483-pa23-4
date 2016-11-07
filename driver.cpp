@@ -27,9 +27,11 @@ using namespace std;
 #define DEBUG 0
 
 int encrypt(string mode, unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {
+
+	unsigned char *IV = NULL;
 	if (mode == CTR)
 		return ctr_encrypt(key, text, N, output);
-	return cbc_encrypt(key, (unsigned char *) text, N, output);
+	return cbc_encrypt(key, (unsigned char *) text, N, output, IV);
 } 
 
 int decrypt(string mode, unsigned char *key, unsigned char*text, unsigned int N, u_string &output) {

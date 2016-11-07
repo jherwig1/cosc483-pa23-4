@@ -11,18 +11,22 @@ void block_xor(unsigned char *a, unsigned char *b, unsigned char *out) {
 		out[i] = a[i] ^ b[i];
 }
 
-int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_string &output) {
+int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_string &output, unsigned char *IV) {
 	int i;
-	unsigned char IV[BLOCK_SIZE];
+//	unsigned char IV[BLOCK_SIZE];
 	unsigned char cipher[BLOCK_SIZE];
 	unsigned int pN, num_blocks;
 	unsigned char block[BLOCK_SIZE];
 	unsigned char *pad = NULL;
 	u_string ret;
 
-	/* Seed the random number gen and get the IV */
-	RAND_poll();
-	RAND_pseudo_bytes(IV, sizeof(IV));
+
+	if (IV == NULL) {
+		IV = (unsigned char *) malloc(sizeof(unsigned char) * BLOCK_SIZE);
+		/* Seed the random number gen and get the IV */
+		RAND_poll();
+		RAND_pseudo_bytes(IV, sizeof(IV));
+	}
 
 	/* Compute the number of bytes needed to pad to block size */
 	pN = 0;
@@ -117,3 +121,37 @@ int cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &output
 //	printf("%s\n", output.c_str());
 	return (num_blocks - 2) * BLOCK_SIZE - pN;
 }
+
+int cbc_mac_verify(unsigned char *key, unsigned char *text, unsigned int N, string tagfile) {
+
+	/* Verify takes a tag and checks if hte tag verifeis */
+	u_string output;
+	int Nret;
+
+	Nret = cbc_mac(key, text, N, output);
+	cout << "verified the tag for the file, Nret = " << Nret << endl;
+}
+
+
+int cbc_mac_generate(unsigned char *key, unsigned char *text, unsigned int N, string tagfile) {
+	/* Generate gets a tag and runs it through */
+	u_string output;
+	int Nret;
+
+	Nret = cbc_mac(key, text, N, output);
+	cout << "Generated the tag for the file, Nret = " << Nret << endl;
+
+	/* Write the key out to the file */
+}
+
+int cbc_mac(unsigned char *key, unsigned char *text, unsigned int N, u_string output) {
+	unsigned char *IV = (unsigned char *) calloc(sizeof(unsigned char), BLOCK_SIZE);
+	int Ne;
+	unsigned char *plaintext = (unsigned char *) malloc(BLOCK_SIZE + N);
+	plaintext[0] = N;
+	memcpy((plaintext + BLOCK_SIZE), text, N);
+	Ne = cbc_encrypt(key, plaintext, N, output, IV);
+	return Ne;
+
+}
+
