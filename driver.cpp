@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <openssl/evp.h>
-#include <openssl/err.h>
+#include <openssl/err.h> 
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
 
 #include "cbc.h"
 #include "ctr.h"
+#include "hex_string_conv.h"
 
 typedef std::basic_string<unsigned char> u_string;
 extern u_string encode(u_string key, u_string data);
@@ -42,10 +43,10 @@ int decrypt(string mode, unsigned char *key, unsigned char*text, unsigned int N,
 
 int main(int argc, char *argv[]) {
 	string usage = "usage: ./driver mode action keyfile inputfile outputfile\n";
-	string mode, action, keyfile, textfile, outputfile;
+	string mode, action, keyfile, textfile, outputfile, temp_out;
 	u_string output;
-	FILE *fout;
 	ifstream fin;
+	ofstream fout;
 	stringstream keyf, textf;
 
 	if (argc == 1) {
@@ -95,27 +96,30 @@ int main(int argc, char *argv[]) {
 	const string& text_ref = textf.str();
 
 	SSL_load_error_strings();
-	key = new unsigned char[key_ref.size() + 1];
-	text = new unsigned char[text_ref.size() + 1];
-	memcpy(key, key_ref.c_str(), key_ref.size());
-	memcpy(text, text_ref.c_str(), text_ref.size());
+	key = new unsigned char[key_ref.size()];
+	text = new unsigned char[text_ref.size()];
+
+	hex_to_binary(key_ref, key, key_ref.size() / 2);
+	hex_to_binary(text_ref, text, text_ref.size() / 2);
 
 	int N;
 
 	/* Run the correct action */
 	if (action == ENCRYPTION)
-		N = encrypt(mode, key, text, text_ref.size(), output);
+		N = encrypt(mode, key, text, text_ref.size() / 2, output);
 	else
-		N = decrypt(mode, key, text, text_ref.size(), output);
+		N = decrypt(mode, key, text, text_ref.size() / 2, output);
 
-	fout = fopen(outputfile.c_str(), "wb");
-	if (fout == NULL) {
+	fout.open(outputfile.c_str());
+	if (!fout.is_open()) {
 		cerr << "Can't open the output file for writing\n";
 		exit(1);
 	}
 
-	fwrite(output.c_str(), sizeof(unsigned char), N, fout);
-	fclose(fout);
+
+	binary_to_hex((unsigned char *)output.c_str(), N, temp_out);
+	fout << temp_out << endl;
+	fout.close();
 
 	return 1;
 }
