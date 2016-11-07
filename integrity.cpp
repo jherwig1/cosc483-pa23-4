@@ -100,7 +100,6 @@ int main(int argc, char *argv[]) {
 	memcpy(key, key_ref.c_str(), key_ref.size());
 	memcpy(text, text_ref.c_str(), text_ref.size());
 
-	mode = 2;
 	int N;
 
 	/* Run the correct action */
