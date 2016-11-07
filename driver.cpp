@@ -10,6 +10,7 @@
 #include <openssl/rand.h>
 
 #include "cbc.h"
+#include "ctr.h"
 
 typedef std::basic_string<unsigned char> u_string;
 extern u_string encode(u_string key, u_string data);
@@ -24,13 +25,6 @@ using namespace std;
 #define BLOCK_SIZE 16
 
 #define DEBUG 0
-
-int ctr_encrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {
-	return 1;
-}
-
-
-extern int ctr_decrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {}
 
 int encrypt(string mode, unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {
 	if (mode == CTR)
@@ -66,6 +60,7 @@ int main(int argc, char *argv[]) {
 	} else if (argc != 6) {
 		cerr << "Not enough arguments provided\n";
 		cerr << usage;
+		return 0;
 	} else {
 		mode = argv[1];
 		action = argv[2];
@@ -75,7 +70,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Read in the keyfile and textfile */
-	fin.open(keyfile);
+	fin.open(keyfile.c_str());
 
 	if (!fin.is_open()) {
 		cerr << "Could not open " << keyfile << " for reading\n";
@@ -85,7 +80,7 @@ int main(int argc, char *argv[]) {
 	keyf << fin.rdbuf();
 	fin.close();
 
-	fin.open(textfile);
+	fin.open(textfile.c_str());
 	if (!fin.is_open()) {
 		cerr << "Could not open " << textfile << " for reading\n";
 		exit(1);
@@ -103,14 +98,13 @@ int main(int argc, char *argv[]) {
 	memcpy(key, key_ref.c_str(), key_ref.size());
 	memcpy(text, text_ref.c_str(), text_ref.size());
 
-	mode = 2;
 	int N;
 
 	/* Run the correct action */
 	if (action == ENCRYPTION)
-		N = encrypt(mode, key, text, text_ref.size() - 1 , output);
+		N = encrypt(mode, key, text, text_ref.size(), output);
 	else
-		N = decrypt(mode, key, text, text_ref.size() + 1, output);
+		N = decrypt(mode, key, text, text_ref.size(), output);
 
 	fout = fopen(outputfile.c_str(), "wb");
 	if (fout == NULL) {
