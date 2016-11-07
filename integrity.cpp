@@ -11,6 +11,8 @@
 #include <string.h>
 
 #include "cbc.h"
+#include "hash_and_mac.h"
+#include "hex_string_conv.h"
 
 typedef std::basic_string<unsigned char> u_string;
 extern u_string encode(u_string key, u_string data);
@@ -26,17 +28,16 @@ using namespace std;
 
 #define DEBUG 0
 
-int hash_and_mac() {return 1;}
 
 int generate(int mode, unsigned char *key, unsigned char *text, int N, string tagfile) {
 	if (mode == HASH)
-		return hash_and_mac();
+		return hash_and_mac_generate(key, text, N, tagfile);
 	return cbc_mac_generate(key, text, N, tagfile);
 }
 
 int verify(int mode, unsigned char *key, unsigned char *text, int N, string tagfile) {
 	if (mode == HASH)
-		return hash_and_mac();
+		return hash_and_mac_verify(key, text, N, tagfile);
 	return cbc_mac_verify(key, text, N, tagfile);
 }
 
@@ -93,20 +94,27 @@ int main(int argc, char *argv[]) {
 	unsigned char *key, *text;
 	const string& key_ref = keyf.str();
 	const string& text_ref = textf.str();
+	unsigned int key_size;
+	unsigned int text_size;
 
 	SSL_load_error_strings();
-	key = new unsigned char[key_ref.size() + 1];
-	text = new unsigned char[text_ref.size() + 1];
-	memcpy(key, key_ref.c_str(), key_ref.size());
-	memcpy(text, text_ref.c_str(), text_ref.size());
+	key = new unsigned char[key_ref.size()];
+	text = new unsigned char[text_ref.size()];
+
+	//because it is written in hex and we are converting to binary
+	key_size = key_ref.size() / 2;
+	text_size = text_ref.size() / 2;
+
+	hex_to_binary(key_ref, key, key_size);
+	hex_to_binary(text_ref, text, key_size);
 
 	int N;
 
 	/* Run the correct action */
 	if (action == GENERATE)
-		N = generate(mode, key, text, text_ref.size(), tagfile);
+		N = generate(mode, key, text, text_size, tagfile);
 	else {
-		if (verify(mode, key, text, text_ref.size(), tagfile)) {
+		if (verify(mode, key, text, text_size, tagfile)) {
 			cout << "The tag verifies the message\n";
 		} else
 			cout << "The tag does not verify the message\n";
