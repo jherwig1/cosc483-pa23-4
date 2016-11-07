@@ -126,31 +126,66 @@ int cbc_mac_verify(unsigned char *key, unsigned char *text, unsigned int N, stri
 
 	/* Verify takes a tag and checks if hte tag verifeis */
 	u_string output;
-	int Nret;
+	int Nret, offset, ret;
+	FILE *fout;
+	long lSize;
+	unsigned char *buffer;
 
 	Nret = cbc_mac(key, text, N, output);
-	cout << "verified the tag for the file, Nret = " << Nret << endl;
+	fout = fopen(tagfile.c_str(), "r");
+	if (fout == NULL) {
+		cerr << "Could not open tagfile for reading\n";
+		exit(1);
+	}
+
+	fseek(fout, 0, SEEK_END);
+	lSize = ftell(fout);
+	rewind(fout);
+	buffer = (unsigned char *) malloc(lSize);
+	fread(buffer, 1, lSize, fout);
+	fclose(fout);
+
+	if (lSize == 0)
+		return 0;
+
+	/* Compute the offset to get the last block of the actual message */
+	offset =  Nret - (3 * BLOCK_SIZE);
+	ret = memcmp(output.c_str() + offset, buffer, BLOCK_SIZE);
+
+	free(buffer);
+	return !ret;
 }
 
 
 int cbc_mac_generate(unsigned char *key, unsigned char *text, unsigned int N, string tagfile) {
 	/* Generate gets a tag and runs it through */
 	u_string output;
-	int Nret;
+	int Nret, offset;
+	FILE *fout;
 
 	Nret = cbc_mac(key, text, N, output);
-	cout << "Generated the tag for the file, Nret = " << Nret << endl;
 
 	/* Write the key out to the file */
+	fout = fopen(tagfile.c_str(), "wb");
+	if (fout == NULL) {
+		cerr << "Could not open tagfile for writing\n";
+		exit(1);
+	}
+
+	offset = Nret - (3 * BLOCK_SIZE);
+	fwrite(output.c_str() + offset, sizeof(unsigned char), BLOCK_SIZE, fout);
+	fclose(fout);
+	return 1;
 }
 
-int cbc_mac(unsigned char *key, unsigned char *text, unsigned int N, u_string output) {
+int cbc_mac(unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {
 	unsigned char *IV = (unsigned char *) calloc(sizeof(unsigned char), BLOCK_SIZE);
 	int Ne;
 	unsigned char *plaintext = (unsigned char *) malloc(BLOCK_SIZE + N);
 	plaintext[0] = N;
 	memcpy((plaintext + BLOCK_SIZE), text, N);
 	Ne = cbc_encrypt(key, plaintext, N, output, IV);
+	free(plaintext);
 	return Ne;
 
 }

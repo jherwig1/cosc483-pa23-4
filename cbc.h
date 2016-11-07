@@ -17,7 +17,7 @@ int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_stri
 
 int cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &output);
 
-int cbc_mac(unsigned char *key, unsigned char *text, unsigned int N, u_string output);
+int cbc_mac(unsigned char *key, unsigned char *text, unsigned int N, u_string &output);
 
 int cbc_mac_generate(unsigned char *key, unsigned char *text, unsigned int N, std::string tagfile);
 
