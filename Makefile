@@ -13,4 +13,4 @@ ctr.o: ctr.cpp ctr.h cbc.h
 hex_string_conv.o: hex_string_conv.cpp hex_string_conv.h
 	g++ -g -std=c++11 -c -o hex_string_conv.o hex_string_conv.cpp
 clean:
-	rm *.o driver
+	rm *.o driver integrity
