@@ -30,7 +30,7 @@ int ctr_encrypt(unsigned char *key, unsigned char *text, unsigned int N, u_strin
 }
 
 
-extern void ctr_decrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {}
+extern int ctr_decrypt(unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {}
 
 int encrypt(string mode, unsigned char *key, unsigned char *text, unsigned int N, u_string &output) {
 	if (mode == CTR)
@@ -38,7 +38,7 @@ int encrypt(string mode, unsigned char *key, unsigned char *text, unsigned int N
 	return cbc_encrypt(key, (unsigned char *) text, N, output);
 } 
 
-void decrypt(string mode, unsigned char *key, unsigned char*text, unsigned int N, u_string &output) {
+int decrypt(string mode, unsigned char *key, unsigned char*text, unsigned int N, u_string &output) {
 	if (mode == CTR)
 		return ctr_decrypt(key, text, N, output);
 	return cbc_decrypt(key, text, N, output);
@@ -110,9 +110,16 @@ int main(int argc, char *argv[]) {
 	if (action == ENCRYPTION)
 		N = encrypt(mode, key, text, text_ref.size() - 1 , output);
 	else
-		decrypt(mode, key, text, text_ref.size() + 1, output);
+		N = decrypt(mode, key, text, text_ref.size() + 1, output);
 
+	fout = fopen(outputfile.c_str(), "wb");
+	if (fout == NULL) {
+		cerr << "Can't open the output file for writing\n";
+		exit(1);
+	}
 
-	/* Have not written the file output yet, it wasn't working properly */
+	fwrite(output.c_str(), sizeof(unsigned char), N, fout);
+	fclose(fout);
+
 	return 1;
 }

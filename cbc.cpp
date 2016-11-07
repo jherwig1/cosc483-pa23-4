@@ -58,14 +58,14 @@ int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_stri
 	}
 
 	// TODO
-	fwrite(output.c_str(), 1, (num_blocks + 2) * BLOCK_SIZE, stdout);
+	//fwrite(output.c_str(), 1, (num_blocks + 2) * BLOCK_SIZE, stdout);
 
 	if (pad != NULL)
 		free(pad);
-	return (num_blocks + 1) * BLOCK_SIZE;
+	return (num_blocks + 2) * BLOCK_SIZE;
 }
 
-void cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &output) {
+int cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &output) {
 	unsigned int num_blocks;
 	unsigned char IV[BLOCK_SIZE];
 	unsigned int pN;
@@ -91,8 +91,8 @@ void cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &outpu
 	size = BLOCK_SIZE - pN;
 
 	for (i = num_blocks - 3, k = 0; i >= 0; i--, k++) {
-		if (i == 0) { //cout << "i is zero, using iv\n";
-			ptr = IV;}
+		if (i == 0) 
+			ptr = IV;
 		else {
 			memcpy(prev_block, (text + (i - 1) * BLOCK_SIZE), BLOCK_SIZE);
 			ptr = prev_block;
@@ -105,9 +105,14 @@ void cbc_decrypt(unsigned char *key, unsigned char *text, int N, u_string &outpu
 			cur_block[j] = ret[j];
 
 		block_xor(ptr, cur_block, out);
+/*
+		for (j = 0; j < BLOCK_SIZE; j++)
+			output[i * BLOCK_SIZE + j] = out[j];
+*/
 		memcpy(&(output[i * BLOCK_SIZE]), out, BLOCK_SIZE);
 		size = BLOCK_SIZE;
 	}
 
-	printf("%s\n", output.c_str());
+//	printf("%s\n", output.c_str());
+	return (num_blocks - 2) * BLOCK_SIZE - pN;
 }
