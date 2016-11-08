@@ -1,7 +1,7 @@
-all: driver integrity
+all: encrypt integrity
 
-driver: driver.cpp ecb.o cbc.o ctr.o hex_string_conv.o
-	g++ -g -o driver ecb.o cbc.o ctr.o hex_string_conv.o driver.cpp -lcrypto -lssl
+encrypt: encrypt.cpp ecb.o cbc.o ctr.o hex_string_conv.o
+	g++ -g -o encrypt ecb.o cbc.o ctr.o hex_string_conv.o encrypt.cpp -lcrypto -lssl
 integrity: integrity.cpp ecb.o cbc.o hex_string_conv.o hash_and_mac.o
 	g++ -o integrity ecb.o cbc.o hex_string_conv.o hash_and_mac.o integrity.cpp -lcrypto -lssl
 ecb.o: ecb.cpp
@@ -15,4 +15,4 @@ hash_and_mac.o: hash_and_mac.cpp
 hex_string_conv.o: hex_string_conv.cpp hex_string_conv.h
 	g++ -g -std=c++11 -c -o hex_string_conv.o hex_string_conv.cpp
 clean:
-	rm *.o driver integrity
+	rm *.o encrypt integrity

@@ -42,7 +42,7 @@ int decrypt(string mode, unsigned char *key, unsigned char*text, unsigned int N,
 } 
 
 int main(int argc, char *argv[]) {
-	string usage = "usage: ./driver mode action keyfile inputfile outputfile\n";
+	string usage = "usage: ./encrypt mode action keyfile inputfile outputfile\n";
 	string mode, action, keyfile, textfile, outputfile, temp_out;
 	u_string output;
 	ifstream fin;
