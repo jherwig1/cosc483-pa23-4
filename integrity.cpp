@@ -64,6 +64,7 @@ int main(int argc, char *argv[]) {
 	} else if (argc != 6) {
 		cerr << "Not enough arguments provided\n";
 		cerr << usage;
+		exit(1);
 	} else {
 		mode = atoi(argv[1]);
 		action = argv[2];
