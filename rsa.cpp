@@ -9,6 +9,7 @@
 #include <fstream>
 
 #include "rsa_keygen.h"
+#include "rsa_decrypt.h"
 
 using namespace std;
 
@@ -33,17 +34,27 @@ int main(int argc, char *argv[]) {
 	if (argc == 1) {
 		cout << "Select an action\nEnter " << KEYGEN << " for keygen, " << ENCRYPT << " for encryption or " << DECRYPT << " for decryption: ";
 		cin >> action;
-		cout << "Key file: ";
-		cin >> keyfile;
-		if(action != KEYGEN) {
-			cout << "Input file: ";
+		if(action == KEYGEN) {
+			cout << "Security Param: ";
+			cin >> security_param;
+			cout << "Keyfile: ";
+			cin >> keyfile;
+			rsa_keygen(security_param, keyfile);
+		} else if(action == ENCRYPT) {
+			cout << "Public Key File: ";
+			cin >> keyfile;
+			cout << "Plaintext file: ";
 			cin >> textfile;
 			cout << "Output file: ";
 			cin >> outputfile;
-		}
-		else  {
-			cout << "Security Param: ";
-			cin >> security_param;
+		} else if(action == DECRYPT) {
+			cout << "Private key file (does not have .pub): ";
+			cin >> keyfile;
+			cout << "Ciphertext file: ";
+			cin >> textfile;
+			cout << "Output file: ";
+			cin >> outputfile;
+			rsa_decrypt(keyfile, textfile, outputfile);
 		}
 /*	else if (argc >= 5 && argc <= 6) {
 		action = argv[1];
@@ -58,29 +69,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	if(action == KEYGEN) {
-		rsa_keygen(security_param, keyfile);
-	}
-/*
-	//Read in the keyfile and the textfile
-	 fin.open(keyfile.c_str());
-
-    if (!fin.is_open()) {
-        cerr << "Could not open " << keyfile << " for reading\n";
-        exit(1);
-    }
-
-    keyf << fin.rdbuf();
-    fin.close();
-
-    fin.open(textfile.c_str());
-    if (!fin.is_open()) {
-        cerr << "Could not open " << textfile << " for reading\n";
-        exit(1);
-    }
-    textf << fin.rdbuf();
-    fin.close();
-*/
 	return 0;
 }
 
