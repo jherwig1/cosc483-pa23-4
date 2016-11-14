@@ -60,16 +60,16 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 	fin >> encrypted;
 	fin.close();
 
-	cout << encrypted << endl;
 
 	int padded = 0;
+	int delta = security_param / 2;
 
 	//for each block of input, decrypt it and delete the padding
 	//then add it to the output
-	for(i = 0; i < encrypted.size(); i += security_param / 4) {
-		char *block = (char *)malloc((security_param / 4) + 1);
-		strncpy(block, encrypted.c_str() + i, security_param / 4);
-		block[(security_param / 4)] = 0x00;
+	for(i = 0; i < encrypted.size(); i += delta) {
+		char *block = (char *)malloc((delta) + 1);
+		strncpy(block, encrypted.c_str() + i, delta);
+		block[(delta)] = 0x00;
 		BN_hex2bn(BN_vals + 2, block);
 		BN_encrypted = BN_vals[2];
 
@@ -85,9 +85,6 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 		//take off all the RSA padding
 		temp_string = BN_bn2hex(BN_plaintext);
-		BN_print_fp(stdout, BN_plaintext);
-		cout << endl;
-		cout << temp_string << endl;
 		//only increment by the randomness and 2 of the 3 added bytes
 		//it cuts off the leading zeros
 		plaintext += temp_string + 2*(security_param / (8*2)) + 2*2;
@@ -104,9 +101,6 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 
 	//see how many bytes of padding you need to remove
-	//IF SHIT IS BROKEN THIS IS IT
-	cout << padded << endl;
-	//padded = (int)plaintext[plaintext.size() - 1];
 	plaintext.resize(plaintext.size()-padded*2);
 
 	fout.open(outputfile.c_str());
