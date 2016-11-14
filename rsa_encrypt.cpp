@@ -98,12 +98,6 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	UCHAR *block;
 	UCHAR *ptr;
 
-
-	//printf("plaintext size = %d\nsecurity = %d\nsecur bytes = %d\nstride = %d\n", plaintext_hex.size() / 2, security_param, security_param_bytes, stride);
-
-	//printf("padding = %d\n", padding);
-
-
 	block = (UCHAR *) malloc(block_size);
 	for (i = 0, j = 0, block_num = 0; i < size; i+= stride, j += block_size, block_num += 1) {
 
@@ -127,11 +121,9 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 		// add the message
 		memcpy((block + 2 + (security_param_bytes / 2) + 1), ptr, stride);
 
-		fwrite(block, 1, block_size, stdout);
 
 		/* Get the number rep of the block */
 		binary_to_hex(block, block_size, o);
-//		cout << "o.size = " << o.size() << endl;
 		BN_hex2bn(BN_vals + 2, o.c_str());
 		
 		BN_plaintext = BN_vals[2];
@@ -153,11 +145,12 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 	RAND_pseudo_bytes(random_bytes, security_param_bytes / 2);
 	memcpy((block + 2), random_bytes, security_param_bytes / 2);
-	block[block_size - 1] = padding;
-
-	fwrite(block, 1, block_size, stdout);
+	block[block_size - 1] = padding + stride;
 
 	binary_to_hex(block, block_size, o);
+	UCHAR *text = (UCHAR *) malloc(o.size() / 2);
+	hex_to_binary(o, text, o.size() /2);
+
 	BN_hex2bn(BN_vals + 2, o.c_str());
 	BN_plaintext = BN_vals[2];
 
@@ -165,8 +158,8 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 	temp_string = BN_bn2hex(BN_encrypted);
 	enc += temp_string;
-	OPENSSL_free(temp_string);
 
+	OPENSSL_free(temp_string);
 	BN_clear_free(BN_N);
 	BN_clear_free(BN_plaintext);
 	BN_clear_free(BN_encrypted);
