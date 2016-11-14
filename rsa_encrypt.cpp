@@ -99,9 +99,9 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	UCHAR *ptr;
 
 
-	printf("plaintext size = %d\nsecurity = %d\nsecur bytes = %d\nstride = %d\n", plaintext_hex.size() / 2, security_param, security_param_bytes, stride);
+	//printf("plaintext size = %d\nsecurity = %d\nsecur bytes = %d\nstride = %d\n", plaintext_hex.size() / 2, security_param, security_param_bytes, stride);
 
-	printf("padding = %d\n", padding);
+	//printf("padding = %d\n", padding);
 
 
 	block = (UCHAR *) malloc(block_size);
@@ -119,7 +119,7 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 		/* Generate the random bits */
 		RAND_pseudo_bytes(random_bytes, security_param_bytes / 2);
-		memcpy((block + 1), random_bytes, security_param_bytes / 2);
+		memcpy((block + 2), random_bytes, security_param_bytes / 2);
 
 		// add the zero byte
 		block[2 + security_param_bytes / 2] = 0;
@@ -127,10 +127,12 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 		// add the message
 		memcpy((block + 2 + (security_param_bytes / 2)), ptr, stride);
 
+		fwrite(block, 1, block_size, stdout);
+
 		/* Get the number rep of the block */
 		binary_to_hex(block, block_size, o);
 		BN_hex2bn(BN_vals + 2, o.c_str());
-
+		
 		BN_plaintext = BN_vals[2];
 
 		/* Compute c = m^e mod N */
@@ -152,6 +154,8 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	memcpy((block + 2), random_bytes, security_param_bytes / 2);
 	block[block_size - 1] = padding;
 
+	fwrite(block, 1, block_size, stdout);
+
 	binary_to_hex(block, block_size, o);
 	BN_hex2bn(BN_vals + 2, o.c_str());
 	BN_plaintext = BN_vals[2];
@@ -171,13 +175,4 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	fout.open(outputfile.c_str());
 	fout << enc;
 	fout.close();
-	//see how many bytes of padding you need to remove
-	//IF SHIT IS BROKEN THIS IS IT
-	/*
-	padded = (UCHAR)plaintext[plaintext.size() - 1];
-	plaintext.resize(plaintext.size()-padded);
-	fout.open(outputfile.c_str());
-	fout << plaintext;
-	fout.close();
-	*/
 }
