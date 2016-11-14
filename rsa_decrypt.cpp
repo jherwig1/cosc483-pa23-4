@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string.h>
 #include <openssl/bn.h>
+#include <openssl/crypto.h>
 
 #include "rsa_decrypt.h"
 

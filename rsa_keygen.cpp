@@ -10,6 +10,8 @@
 #include <iostream>
 #include <openssl/bn.h>
 #include <openssl/rand.h>
+#include <openssl/crypto.h>
+
 
 #include "hex_string_conv.h"
 #include "rsa_keygen.h"

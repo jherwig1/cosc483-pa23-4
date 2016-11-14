@@ -76,6 +76,7 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	fin >> plaintext_hex;
 	fin.close();
 
+
 	/* Get the binary representation of the hex string */
 	size = plaintext_hex.size() / 2;
 	plaintext = new UCHAR[plaintext_hex.size() / 2];
@@ -89,12 +90,23 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 	RAND_poll();
 	UCHAR *random_bytes = new UCHAR[security_param_bytes / 2];
-	padding = size % stride;
+	if (size % stride)
+		padding = stride - size % stride;
+	else
+		padding = 0;
+
 	UCHAR *block;
 	UCHAR *ptr;
 
+
+	printf("plaintext size = %d\nsecurity = %d\nsecur bytes = %d\nstride = %d\n", plaintext_hex.size() / 2, security_param, security_param_bytes, stride);
+
+	printf("padding = %d\n", padding);
+
+
 	block = (UCHAR *) malloc(block_size);
 	for (i = 0, j = 0, block_num = 0; i < size; i+= stride, j += block_size, block_num += 1) {
+
 		if (block_num == (num_blocks - 1)) {
 			ptr = (UCHAR *) calloc(stride, 1);
 			memcpy(ptr, (plaintext + i), size - i);

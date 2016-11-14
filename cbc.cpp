@@ -26,7 +26,7 @@ int cbc_encrypt(unsigned char *key, unsigned char *text, unsigned int N,  u_stri
 		IV = (unsigned char *) malloc(sizeof(unsigned char) * BLOCK_SIZE);
 		/* Seed the random number gen and get the IV */
 		RAND_poll();
-		RAND_pseudo_bytes(IV, sizeof(IV));
+		RAND_pseudo_bytes(IV, BLOCK_SIZE);
 	}
 
 	/* Compute the number of bytes needed to pad to block size */
