@@ -125,12 +125,13 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 		block[2 + security_param_bytes / 2] = 0;
 
 		// add the message
-		memcpy((block + 2 + (security_param_bytes / 2)), ptr, stride);
+		memcpy((block + 2 + (security_param_bytes / 2) + 1), ptr, stride);
 
 		fwrite(block, 1, block_size, stdout);
 
 		/* Get the number rep of the block */
 		binary_to_hex(block, block_size, o);
+//		cout << "o.size = " << o.size() << endl;
 		BN_hex2bn(BN_vals + 2, o.c_str());
 		
 		BN_plaintext = BN_vals[2];
