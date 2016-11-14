@@ -10,6 +10,8 @@
 
 #include "rsa_keygen.h"
 #include "rsa_decrypt.h"
+#include "rsa_encrypt.h"
+
 
 using namespace std;
 
@@ -47,6 +49,7 @@ int main(int argc, char *argv[]) {
 			cin >> textfile;
 			cout << "Output file: ";
 			cin >> outputfile;
+			rsa_encrypt(keyfile, textfile, outputfile);	
 		} else if(action == DECRYPT) {
 			cout << "Private key file (does not have .pub): ";
 			cin >> keyfile;
