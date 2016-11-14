@@ -82,7 +82,7 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	hex_to_binary(plaintext_hex, plaintext, plaintext_hex.size() / 2);
 
 	security_param_bytes = security_param / 8;
-	stride = security_param_bytes / 2 - 2;
+	stride = security_param_bytes / 2 - 3;
 	num_blocks = ceil(size / (stride * 1.0));
 	block_size = security_param_bytes;
 	UCHAR *output = new UCHAR[(num_blocks + 1) * block_size];
@@ -93,7 +93,7 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	UCHAR *block;
 	UCHAR *ptr;
 
-	block = (UCHAR *) malloc(block_size); //new UCHAR[block_size];
+	block = (UCHAR *) malloc(block_size);
 	for (i = 0, j = 0, block_num = 0; i < size; i+= stride, j += block_size, block_num += 1) {
 		if (block_num == (num_blocks - 1)) {
 			ptr = (UCHAR *) calloc(stride, 1);
@@ -102,17 +102,18 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 			ptr = plaintext + i;
 
 		/* Padding */
-		block[0] = 2; //prepend a 2
+		block[0] = 0;
+		block[1] = 2; //prepend a 2
 
 		/* Generate the random bits */
 		RAND_pseudo_bytes(random_bytes, security_param_bytes / 2);
 		memcpy((block + 1), random_bytes, security_param_bytes / 2);
 
 		// add the zero byte
-		block[1 + security_param_bytes / 2] = 0;
+		block[2 + security_param_bytes / 2] = 0;
 
 		// add the message
-		memcpy((block + 1 + (security_param_bytes / 2)), ptr, stride);
+		memcpy((block + 2 + (security_param_bytes / 2)), ptr, stride);
 
 		/* Get the number rep of the block */
 		binary_to_hex(block, block_size, o);
@@ -132,10 +133,11 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	free(ptr);
 	for (i = 0; i < block_size; i++)
 		block[i] = 0;
-	block[0] = 2;
+	block[0] = 0;
+	block[1] = 2;
 
 	RAND_pseudo_bytes(random_bytes, security_param_bytes / 2);
-	memcpy((block + 1), random_bytes, security_param_bytes / 2);
+	memcpy((block + 2), random_bytes, security_param_bytes / 2);
 	block[block_size - 1] = padding;
 
 	binary_to_hex(block, block_size, o);
@@ -153,7 +155,6 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	BN_clear_free(BN_encrypted);
 	BN_clear_free(BN_public_key);
 	BN_CTX_free(ctx);
-
 
 	fout.open(outputfile.c_str());
 	fout << enc;
