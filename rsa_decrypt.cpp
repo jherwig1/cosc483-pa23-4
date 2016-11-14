@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <openssl/bn.h>
+#include <openssl/crypto.h>
 
 #include "rsa_decrypt.h"
 
