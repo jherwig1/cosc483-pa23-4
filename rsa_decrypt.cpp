@@ -67,7 +67,7 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 		//take off all the RSA padding
 		temp_string = BN_bn2hex(BN_plaintext);
-		plaintext += temp_string + (security_param / 2) + 3;
+		plaintext += temp_string + (security_param / (8*2)) + 3;
 		OPENSSL_free(temp_string);
 	}
 
