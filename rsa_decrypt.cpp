@@ -104,6 +104,6 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 	plaintext.resize(plaintext.size()-padded*2);
 
 	fout.open(outputfile.c_str());
-	fout << plaintext;
+	fout << plaintext << endl;
 	fout.close();
 }
