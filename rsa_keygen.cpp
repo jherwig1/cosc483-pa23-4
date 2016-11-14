@@ -156,7 +156,6 @@ void rsa_keygen(UINT security_param, string keyfile) {
 
 	//debugging
 	char *temp = BN_bn2hex(N);
-	cout << "N = " << temp << endl;
 	OPENSSL_free(temp);
 
 	//get the order of Zn*
