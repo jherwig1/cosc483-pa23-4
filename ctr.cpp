@@ -29,7 +29,7 @@ int ctr_encrypt(UCHAR *key, UCHAR *text, UINT N, u_string &output) {
 
 	//Seed the RNG and get the IV
 	RAND_poll();
-	RAND_pseudo_bytes(IV, sizeof(IV));
+	RAND_pseudo_bytes(IV, BLOCK_SIZE);
 	memcpy(orig_iv, IV, BLOCK_SIZE);
 
 	//Get the number of blocks
