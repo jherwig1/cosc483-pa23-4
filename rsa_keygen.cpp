@@ -14,6 +14,7 @@
 
 
 #include "hex_string_conv.h"
+#include "rsa_signature.h"
 #include "rsa_keygen.h"
 
 #define NUM_TESTS 12
@@ -113,7 +114,7 @@ BIGNUM * generate_prime(int n) {
 
 //working with the BIGNUM class is a real pain,
 //but it makes a ton of things easier
-void rsa_keygen(UINT security_param, string keyfile) {
+void rsa_keygen(UINT security_param, string keyfile, string identity, string sigfile) {
 	//vars
 	BIGNUM *p;
 	BIGNUM *q;
@@ -202,12 +203,14 @@ void rsa_keygen(UINT security_param, string keyfile) {
 
 
 	fout.open((keyfile + ".pub").c_str());
+	fout << identity << endl;
 	fout << security_param << endl;
 	fout << N_string << endl;
 	fout << e_string << endl;
 	fout.close();
 
 	fout.open(keyfile.c_str());
+	fout << identity << endl;
 	fout << security_param << endl;
 	fout << N_string << endl;
 	fout << d_string << endl;
@@ -216,6 +219,14 @@ void rsa_keygen(UINT security_param, string keyfile) {
 	OPENSSL_free(N_string);
 	OPENSSL_free(e_string);
 	OPENSSL_free(d_string);
+
+	if (sigfile == "None") {
+		sigfile = keyfile;
+	} 
+
+
+	cout << "signing with: " << sigfile << " keyifle = " << keyfile + ".pub" << endl;
+	sign(sigfile, keyfile + ".pub", keyfile + ".sig");
 }
 
 

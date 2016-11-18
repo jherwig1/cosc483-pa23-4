@@ -30,7 +30,7 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 	ofstream fout;
 	string public_key, N, encrypted;
 	UCHAR *plaintext;
-	string plaintext_hex;
+	string plaintext_hex, identity;
 	char *temp_string;
 	int security_param_bytes, security_param, i, j, padding;
 	int stride, num_blocks, block_num, block_size, size;
@@ -59,7 +59,7 @@ void rsa_encrypt(string &keyfile, string &inputfile, string &outputfile) {
 
 	//open the keyfile and get the public key
 	fin.open(keyfile.c_str());
-	fin >> security_param >> N >> public_key;
+	fin >> identity >> security_param >> N >> public_key;
 	fin.close();
 
 	//get N and the private key

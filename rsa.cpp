@@ -29,7 +29,7 @@ void print_usage(string name) {
 int main(int argc, char *argv[]) {
 	//vars
 	ifstream fin;
-	string action, keyfile, textfile, outputfile;
+	string action, keyfile, textfile, outputfile, identity, sigfile;
 	unsigned int security_param;
 
 	//either run program interactively or read in CL args
@@ -41,7 +41,11 @@ int main(int argc, char *argv[]) {
 			cin >> security_param;
 			cout << "Keyfile: ";
 			cin >> keyfile;
-			rsa_keygen(security_param, keyfile);
+			cout << "Identity: ";
+			cin >> identity;
+			cout << "Signature File (Enter None for none): ";
+			cin >> sigfile;
+			rsa_keygen(security_param, keyfile, identity, sigfile);
 		} else if(action == ENCRYPT) {
 			cout << "Public Key File: ";
 			cin >> keyfile;

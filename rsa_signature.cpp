@@ -81,15 +81,19 @@ string compute_signature(string key, string N, int sec_param, string text) {
 }
 
 void sign(string keyfile, string plaintext, string outputfile) {
-	string outputstring, N, key, text, hex_hash;
+	string outputstring, N, key, text, hex_hash, identity;
 	int sec_param;
 	ofstream fout;
 	ifstream fin;
 
 	/* Read in the key and plaintext */
 	fin.open(keyfile.c_str());
-	fin >> sec_param >> N >> key;
+	fin >> identity >> sec_param >> N >> key;
 	fin.close();
+
+
+	cout << "identiyt = " << identity << "sec = " << sec_param << " N = " << N;
+	cout << endl << " key =  " << key << endl;
 
 	fin.open(plaintext.c_str());
 	fin >> text;
@@ -109,14 +113,14 @@ void sign(string keyfile, string plaintext, string outputfile) {
 
 
 bool verify(string keyfile, string plaintext, string sigfile) {
-	string computedsig, signature, key, N, hex_hash, text;
+	string computedsig, signature, key, N, hex_hash, text, identity;
 	int sec_param;
 	ofstream fout;
 	ifstream fin;
 
 	/* Read in the key, text, and signature */
 	fin.open(keyfile.c_str());
-	fin >> sec_param >> N >> key;
+	fin >> identity >> sec_param >> N >> key;
 	fin.close();
 
 	fin.open(plaintext.c_str());

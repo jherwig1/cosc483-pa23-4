@@ -2,6 +2,6 @@
 #define RSA_KEYGEN_HEADER
 
 #include <string>
-void rsa_keygen(unsigned int security_param, std::string keyfile);
+void rsa_keygen(unsigned int security_param, std::string keyfile, std::string identity, std::string sigfile);
 
 #endif

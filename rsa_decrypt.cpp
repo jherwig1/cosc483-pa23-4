@@ -20,7 +20,7 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 	//vars
 	ifstream fin;
 	ofstream fout;
-	string private_key, N, encrypted, plaintext;
+	string private_key, N, encrypted, plaintext, identity;
 	char *temp_string;
 	int security_param, i;
 	//UCHAR padded;
@@ -44,7 +44,7 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 	
 	//open the keyfile and get the private key
 	fin.open(keyfile.c_str());
-	fin >> security_param >> N >> private_key;
+	fin >> identity >> security_param >> N >> private_key;
 	fin.close();
 
 	//get N and the private key
