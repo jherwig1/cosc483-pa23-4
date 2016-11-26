@@ -225,8 +225,25 @@ void rsa_keygen(UINT security_param, string keyfile, string identity, string sig
 	} 
 
 
-	cout << "signing with: " << sigfile << " keyifle = " << keyfile + ".pub" << endl;
-	sign(sigfile, keyfile + ".pub", keyfile + ".sig");
+	/* Bad way to get around the fact that sign takes a hex encoded file */
+
+	/* Recreate the contents of the file in a string */
+	string txt, hex;
+	UCHAR *bin;
+	txt = identity + "\n" + to_string(security_param) + "\n" + string(N_string) + "\n" + string(d_string) + "\n";
+
+	bin = (UCHAR *) malloc(txt.size());
+	memcpy(bin, txt.c_str(), txt.size());
+
+	hex;
+	binary_to_hex(bin, txt.size(), hex);
+
+	/* Write the hex rep to a hex encoded file */
+	fout.open((keyfile + ".hex").c_str());
+	fout << hex;
+	fout.close();
+
+	sign(sigfile, keyfile + ".hex", keyfile + ".sig");
 }
 
 

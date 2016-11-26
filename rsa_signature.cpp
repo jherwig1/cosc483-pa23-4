@@ -31,8 +31,8 @@ string h_hash(string text) {
 
 	/* Hash the message using sha2 */
 	SHA256(a_input, text.size() / 2, h_input);
-	binary_to_hex(h_input, HASH_SIZE, hex_hash);
 
+	binary_to_hex(h_input, HASH_SIZE, hex_hash);
 
 	delete a_input;
 	delete h_input;
@@ -90,10 +90,6 @@ void sign(string keyfile, string plaintext, string outputfile) {
 	fin.open(keyfile.c_str());
 	fin >> identity >> sec_param >> N >> key;
 	fin.close();
-
-
-	cout << "identiyt = " << identity << "sec = " << sec_param << " N = " << N;
-	cout << endl << " key =  " << key << endl;
 
 	fin.open(plaintext.c_str());
 	fin >> text;
