@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 		if(action == SIGN) {
 			cout << "Private key file (does not have .pub): ";
 			cin >> keyfile;
-			cout << "Plaintext file: ";
+			cout << "Plaintext file (hex encoded): ";
 			cin >> textfile;
 			cout << "Output file: ";
 			cin >> outputfile;
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 		} else if(action == VERIFY) {
 			cout << "Public Key File: ";
 			cin >> keyfile;
-			cout << "Plaintext file: ";
+			cout << "Plaintext file (hex encoded): ";
 			cin >> textfile;
 			cout << "Signature file: ";
 			cin >> sigfile;

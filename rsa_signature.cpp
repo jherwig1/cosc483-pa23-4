@@ -103,6 +103,7 @@ void sign(string keyfile, string plaintext, string outputfile) {
 
 	/* Write the signature */
 	fout.open(outputfile.c_str());
+	fout << keyfile << ".pub" << endl;
 	fout << outputstring << endl;
 	fout.close();
 }
@@ -124,6 +125,7 @@ bool verify(string keyfile, string plaintext, string sigfile) {
 	fin.close();
 
 	fin.open(sigfile.c_str());
+	fin >> identity;
 	fin >> signature;
 	fout.close();
 
