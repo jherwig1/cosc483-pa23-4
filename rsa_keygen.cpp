@@ -11,6 +11,7 @@
 #include <openssl/bn.h>
 #include <openssl/rand.h>
 #include <openssl/crypto.h>
+#include <string.h>
 
 
 #include "hex_string_conv.h"

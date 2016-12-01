@@ -9,7 +9,7 @@ integrity: integrity.cpp ecb.o cbc.o hex_string_conv.o hash_and_mac.o
 rsa: rsa.cpp rsa_keygen.o rsa_decrypt.o rsa_encrypt.o hex_string_conv.o
 	g++ -g -o rsa rsa_keygen.o rsa_signature.o rsa_decrypt.o rsa_encrypt.o hex_string_conv.o rsa.cpp -lcrypto -lssl
 rsa_keygen.o: rsa_keygen.cpp rsa_keygen.h rsa_signature.o rsa_signature.h hex_string_conv.o
-	g++ -g -c -o rsa_keygen.o rsa_signature.o rsa_keygen.cpp
+	g++ -g -std=c++11 -c -o rsa_keygen.o rsa_signature.o rsa_keygen.cpp
 rsa_encrypt.o: rsa_encrypt.cpp rsa_encrypt.h
 	g++ -g -c -o rsa_encrypt.o rsa_encrypt.cpp -lm
 rsa_decrypt.o: rsa_decrypt.cpp rsa_decrypt.h
@@ -27,4 +27,4 @@ hash_and_mac.o: hash_and_mac.cpp
 hex_string_conv.o: hex_string_conv.cpp hex_string_conv.h
 	g++ -g -std=c++11 -c -o hex_string_conv.o hex_string_conv.cpp
 clean:
-	rm *.o encrypt integrity rsa
+	rm *.o encrypt integrity rsa sign
