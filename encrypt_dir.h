@@ -15,6 +15,7 @@
 struct Rsa_key {
 	std::string private_keyfile;
 	std::string public_keyfile;
+	std::string public_hexfile;
 	std::string public_sigfile;
 };
 
