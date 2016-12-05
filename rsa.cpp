@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 			cin >> keyfile;
 			cout << "Identity: ";
 			cin >> identity;
-			cout << "Signature File (Enter None for self-sig): ";
+			cout << "Signature private key (Enter None for self-sig): ";
 			cin >> sigfile;
 			rsa_keygen(security_param, keyfile, identity, sigfile);
 		} else if(action == ENCRYPT) {
