@@ -70,6 +70,7 @@ int hash_and_mac_verify(UCHAR *key, UCHAR *text, UINT N, string tagfile) {
 	//mac the text
 	output = hash_and_mac(key, text, N);
 
+
 	//compare the two
 	if(output == tag) {
 		return 1;

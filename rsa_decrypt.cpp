@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <string.h>
+#include <cctype>
 #include <openssl/bn.h>
 #include <openssl/crypto.h>
 
@@ -103,7 +104,11 @@ void rsa_decrypt(string &keyfile, string &inputfile, string &outputfile) {
 	//see how many bytes of padding you need to remove
 	plaintext.resize(plaintext.size()-padded*2);
 
+	for(i = 0; i < plaintext.size(); i++) {
+		plaintext[i] = tolower(plaintext[i]);
+	}
+
 	fout.open(outputfile.c_str());
-	fout << plaintext << endl;
+	fout << plaintext;
 	fout.close();
 }

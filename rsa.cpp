@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 			cin >> security_param;
 			cout << "Keyfile: ";
 			cin >> keyfile;
-			cout << "Identity: ";
+			cout << "Identity (no spaces): ";
 			cin >> identity;
 			cout << "Signature private key (Enter None for self-sig): ";
 			cin >> sigfile;

@@ -9,6 +9,7 @@
 
 #include "encrypt_dir.h"
 #include "encrypt_dir_lock.h"
+#include "encrypt_dir_unlock.h"
 #include "rsa_signature.h"
 
 using namespace std;
@@ -52,7 +53,9 @@ int main() {
 
 		unlocking.private_keyfile = prompt("Unlocking private keyfile: ");
 		unlocking.public_keyfile = prompt("Unlocking pub keyfile (has .pub extension): ");
+		unlocking.public_hexfile = prompt("Unlocking public hexfile (has .hex extension): ");
 		unlocking.public_sigfile = prompt("Unlocking pub key signature (has .sig extension): ");
+		unlock_dir(dir, unlocking);
 	} else {
 		cout << "Invalid Mode. Please Try again." << endl;
 	}
