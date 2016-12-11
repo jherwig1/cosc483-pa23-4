@@ -15,4 +15,9 @@ The executable sign is used to sign and verify files. In order to sign a file yo
 
 To verify a file, you need a public key file (the public key file of the key you used to sign with), the hex encoded file that was originally signed, and the signature file (ending in a .sig file).
 
+## Encrypting Directory
+The executable pretty much walks you through everything, but one thing to note is that none of the locking certs or certs associated with the locking certs can be in the directory that is encrypted, otherwise they will get overwritten by the executable.
 
+Also, it assumes that everything in the lab holds, including the hex encoded files for the input. 
+
+Finally, it assumes that the signing certificate for the locking public key (including the .pub, the .hex, and .sig file) are all in the current directory.
